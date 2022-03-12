@@ -1,0 +1,21 @@
+* {
+    font-family: Arial, Helvetica, sans-serif;
+
+}
+
+nav {
+    background-color: rgb(177, 177, 177);
+    padding: 25px;
+}
+.btn {
+    background-color: beige;
+}
+
+ul {
+list-style-type: none;
+}
+
+.weather-block {
+    border-radius: 10px;
+    background-color: blanchedalmond;
+}

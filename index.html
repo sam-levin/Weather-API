@@ -5,26 +5,44 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Weather Forecast</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/themes/base/jquery-ui.min.css">
     <link rel="stylesheet" href="./assets/css/style.css">
 </head>
 <body>
     <header>
-        <nav class="navbar">
-            <div class="title">
-                <h3>Sam's Weather Forecast</h3>
-                <ul>
+        <nav class="container-fluid">
+            <div class="row">
+                <h3 class="col-8 text-left">Sam's Weather Forecast</h3>
+                <ul class="col-4">
                     <li>Delete Favorites</li>
                 </ul>
             </div>
         </nav>
     </header>
-    <div>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-3">
+                <form id="city-finder" class="card-body">
+                    <label for="city-input">What city are you looking for?</label>
+                    <input type="text" id="city-input" name="city-input" class="form-input" autofocus="true">
+                    <button type="submit" class="btn">Submit</button>
+                </form>
+                <div class="card-body">
+                    <h5>Favorites</h5>
+                    <ul>
+                        <li>Honolulu</li>
+                        <li>Vancouver</li>
+                        <li>San Francisco</li>
+                    </ul>
+                </div>
+            </div>
+            <div id="weatherBlockContainer"class="col-9">
 
+            </div>
+        </div>
     </div>
-    <form type="input">
-        
-    </form>
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script src="./assets/js/script.js"></script>
 </body>
 </html>
