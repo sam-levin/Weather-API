@@ -3,6 +3,31 @@
 // new weather thing is created
 var weatherBlockContainer = $("#weatherBlockContainer")
 var inputCity = "Penisville, WA"
+var historyListEl = $("#history")
+var historyList = [];
+
+
+// this function saves the current history list
+var saveHistory = function() {
+    localStorage.setItem("history", JSON.stringify(historyList));
+}
+ var loadHistory = function() {
+    historyList = JSON.parse(localStorage.getItem("history"))
+    return(historyList)
+}
+
+var createHistory = function(inputCity) {
+    var newListItem = $("<li>").text(inputCity)
+    historyListEl.append(newListItem);
+    // this next line keeps pushing to the thing
+    saveHistory();
+}
+
+var createHistoryFromStorage = function() {
+    for (i = 0; i < historyList.length; i++) {
+        createHistory(historyList[i])
+    }
+}
 
 // this function should take the input day and use the API to return the temp and weather icon
 var createWeather = function(inputDay) {
@@ -25,12 +50,12 @@ var createSaveBtn = function() {
     return (iconAndText)
 }
 
-var createWeatherReport = function(inputCity) {
-    var weatherBlock = $("<div>").addClass("weather-block justify-content-between p-1 m-2 row");
-    var location = $("<div>").addClass("col-2");
+var createCurrentWeatherReport = function(inputCity) {
+    var weatherBlock = $("<div>").addClass("weather-block justify-content-between p-1 m-2 ");
+    var location = $("<h3>").text(inputCity);
+    var currentTemp = $("<h5>").text("The temperature at " + inputCity + " is 69°").addClass()
     // there should probably be a create weather function that spits out a div with icon, and temp
-    location.append(inputCity)
-    weatherBlock.append(location)    
+    weatherBlock.append(location, currentTemp)    
     weatherBlockContainer.append(weatherBlock)
 }
 
@@ -44,16 +69,36 @@ var createForecast = function(inputCity) {
     var day4weather = createWeather();
     var day5weather = createWeather();
     weather.append(  day1weather, day2weather, day3weather, day4weather, day5weather)
-    weatherBlock.append(weather)
-    weatherBlockContainer.append(forecastText, weatherBlock)
+    weatherBlock.append(forecastText, weather)
+    weatherBlockContainer.append( weatherBlock)
 }
 
+// this clears the existing blocks of weather from the main page
+var clearExistingWeather = function() {
+    var existWeatherBlock = $(".weather-block");
+    existWeatherBlock.remove();
+}
 
+loadHistory();
+//createHistoryFromStorage();
+
+// When the submit button is clicked, it will clear the existing blocks and create todays + forecasts for the searched city
 $("#city-finder").on("click", "button",function(event){
+    clearExistingWeather();
     event.preventDefault();
     var inputCity = $("#city-input").val()
-    createWeatherReport(inputCity);
+    createCurrentWeatherReport(inputCity);
+    createForecast(inputCity);
+    createHistory(inputCity)
+    historyList.push(inputCity)
 })
 
-createWeatherReport(inputCity);
-createForecast(inputCity)
+// when one of the list items in the favorites is clicked, it will show that city's weather report and forecast
+$("#history").on("click", "li", function() {
+    clearExistingWeather();
+    var clickedCity = $(this).text();
+    createCurrentWeatherReport(clickedCity)
+    createForecast(clickedCity)
+    console.log(clickedCity)
+})
+
