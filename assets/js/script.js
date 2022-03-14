@@ -5,29 +5,45 @@ var weatherBlockContainer = $("#weatherBlockContainer")
 var inputCity = "Penisville, WA"
 var historyListEl = $("#history")
 var historyList = [];
-
+var deleteEl = $("#delete")
 
 // this function saves the current history list
 var saveHistory = function() {
     localStorage.setItem("history", JSON.stringify(historyList));
 }
  var loadHistory = function() {
-    historyList = JSON.parse(localStorage.getItem("history"))
+    storedHistoryList = JSON.parse(localStorage.getItem("history"))
+    if (!storedHistoryList) {
+        historyList = []
+    } else {
+        historyList = storedHistoryList    
+    }
     return(historyList)
 }
 
 var createHistory = function(inputCity) {
-    var newListItem = $("<li>").text(inputCity)
+    var newListItem = $("<li>").text(inputCity).addClass("history-city")
     historyListEl.append(newListItem);
     // this next line keeps pushing to the thing
     saveHistory();
 }
 
+var deleteHistory = function() {
+    historyList = [];
+    $(".history-city").remove();
+    saveHistory();
+}
+
 var createHistoryFromStorage = function() {
-    for (i = 0; i < historyList.length; i++) {
-        createHistory(historyList[i])
+    if (!historyList) {
+    } else {
+        for (i = 0; i < historyList.length; i++) {
+            createHistory(historyList[i])
+        }
+
     }
 }
+
 
 // this function should take the input day and use the API to return the temp and weather icon
 var createWeather = function(inputDay) {
@@ -40,7 +56,7 @@ var createWeather = function(inputDay) {
     return (iconAndTemp)
 }
 
-var createSaveBtn = function() {
+/*var createSaveBtn = function() {
     var iconAndText = $("<div>").addClass("d-flex col-2 align-items-center justify-content-center flex-column")
     var saveButton = $("<span>")
     // this following line will need to be a if statement depending on the weather itself
@@ -48,14 +64,23 @@ var createSaveBtn = function() {
     var TextText = $("<h6>").text("Save to Favorites").addClass("text-center");
     iconAndText.append(saveButton, TextText)
     return (iconAndText)
-}
+}*/
 
 var createCurrentWeatherReport = function(inputCity) {
+    var currentAqi = 200 // this needs to change to a JSON element
     var weatherBlock = $("<div>").addClass("weather-block justify-content-between p-1 m-2 ");
     var location = $("<h3>").text(inputCity);
     var currentTemp = $("<h5>").text("The temperature at " + inputCity + " is 69°").addClass()
+    var aqiEl = $("<h5>").text("AQI:" + currentAqi).addClass("aqi-element")
+    if (currentAqi < 50) {
+        aqiEl.addClass("low-aqi")
+    } else if (currentAqi >=50 && currentAqi <=150){
+        aqiEl.addClass("medium-aqi")
+    } else {
+        aqiEl.addClass("high-aqi")
+    }
     // there should probably be a create weather function that spits out a div with icon, and temp
-    weatherBlock.append(location, currentTemp)    
+    weatherBlock.append(location, currentTemp, aqiEl)    
     weatherBlockContainer.append(weatherBlock)
 }
 
@@ -80,17 +105,26 @@ var clearExistingWeather = function() {
 }
 
 loadHistory();
-//createHistoryFromStorage();
+createHistoryFromStorage();
+
+$(deleteEl).on("click", function() {
+    deleteHistory();
+})
 
 // When the submit button is clicked, it will clear the existing blocks and create todays + forecasts for the searched city
 $("#city-finder").on("click", "button",function(event){
-    clearExistingWeather();
     event.preventDefault();
     var inputCity = $("#city-input").val()
-    createCurrentWeatherReport(inputCity);
-    createForecast(inputCity);
-    createHistory(inputCity)
-    historyList.push(inputCity)
+    if (inputCity == "") {
+        window.alert("Please type in a city name or choose from one of your past searches")
+    } else {
+        clearExistingWeather();
+        createCurrentWeatherReport(inputCity);
+        createForecast(inputCity);
+        createHistory(inputCity)
+        historyList.push(inputCity)
+        saveHistory();    
+    }
 })
 
 // when one of the list items in the favorites is clicked, it will show that city's weather report and forecast
@@ -99,6 +133,5 @@ $("#history").on("click", "li", function() {
     var clickedCity = $(this).text();
     createCurrentWeatherReport(clickedCity)
     createForecast(clickedCity)
-    console.log(clickedCity)
 })
 

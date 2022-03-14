@@ -19,3 +19,19 @@ list-style-type: none;
     border-radius: 10px;
     background-color: blanchedalmond;
 }
+
+.aqi-element {
+    padding: 5px;
+    width: fit-content;
+    border-radius: 5px;
+}
+
+.low-aqi {
+    background-color: rgb(144, 219, 144);
+}
+.medium-aqi {
+    background-color: rgb(255, 207, 104);
+}
+.high-aqi {
+    background-color: rgb(255, 140, 140);
+}
