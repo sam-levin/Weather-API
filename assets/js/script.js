@@ -2,7 +2,6 @@
 // api is called
 // new weather thing is created
 var weatherBlockContainer = $("#weatherBlockContainer")
-var inputCity = "Penisville, WA"
 var historyListEl = $("#history")
 var historyList = [];
 var deleteEl = $("#delete")
