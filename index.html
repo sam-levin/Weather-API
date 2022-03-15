@@ -20,25 +20,25 @@
 <body>
     <header>
         <nav class="container-fluid">
-            <div class="row">
-                <h3 class="col-8 text-left">Sam's Weather Forecast</h3>
+            <div class="row ">
+                <h3 class="col-8 text-left text-white font-weight-bold">Sam's Weather Forecast</h3>
                 <ul id="nav-ul" class="col-4">
-                    <li id="delete">Delete Favorites</li>
+                    <li id="delete" class="text-white text-right">Delete History</li>
                 </ul>
             </div>
         </nav>
     </header>
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col-md-12 col-lg-2">
-                <form id="city-finder" class="card-body">
-                    <label for="city-input">What city are you looking for?</label>
+    <div class="container-fluid ">
+        <div class="row main-row flex">
+            <div class="col-md-12 col-lg-2 bg-dark flex-grow-1 h-100">
+                <form id="city-finder" class="card-body text-white">
+                    <label for="city-input"><h4>What city are you looking for?</h4></label>
                     <input type="text" id="city-input" name="city-input" class="form-input" autofocus="true">
                     <button type="submit" id="submit-city"    class="btn m-2">Submit</button>
                 </form>
-                <div class="card-body">
+                <div class="card-body text-white">
                     <h5>Search History</h5>
-                    <ul id="history">
+                    <ul id="history" class="m-0 p-0 text-left">
                     </ul>
                 </div>
             </div>

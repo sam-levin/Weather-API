@@ -6,11 +6,13 @@ var inputCity = "Penisville, WA"
 var historyListEl = $("#history")
 var historyList = [];
 var deleteEl = $("#delete")
+var apiKey = "9212855ef4411938de31c8ee9c5670a9"
 
 // this function saves the current history list
 var saveHistory = function() {
     localStorage.setItem("history", JSON.stringify(historyList));
 }
+
  var loadHistory = function() {
     storedHistoryList = JSON.parse(localStorage.getItem("history"))
     if (!storedHistoryList) {
@@ -22,7 +24,7 @@ var saveHistory = function() {
 }
 
 var createHistory = function(inputCity) {
-    var newListItem = $("<li>").text(inputCity).addClass("history-city")
+    var newListItem = $("<li>").text(inputCity).addClass("history-city text-capitalize")
     historyListEl.append(newListItem);
     // this next line keeps pushing to the thing
     saveHistory();
@@ -44,64 +46,95 @@ var createHistoryFromStorage = function() {
     }
 }
 
-
 // this function should take the input day and use the API to return the temp and weather icon
-var createWeather = function(inputDay) {
+var createWeather = function(data, inputDay) {
     var iconAndTemp = $("<div>").addClass("d-flex align-items-center flex-column")
-    var weatherIcon = $("<span>")
+    var currentIcon = data.daily[inputDay].weather[0].icon
+    var dayTemp = data.daily[inputDay].temp.day;
+    var nightTemp = data.daily[inputDay].temp.night;
+    var description = $("<h4>").text(data.daily[inputDay].weather[0].description).addClass("text-capitalize");
+    var icon = $("<img>").attr("src", "http://openweathermap.org/img/wn/"+ currentIcon +"@2x.png" ) 
     // this following line will need to be a if statement depending on the weather itself
-    weatherIcon.addClass("oi oi-plus pb-3 pt-3")
-    var tempText = $("<h5>").text("69°").addClass("text-center save-button");
-    iconAndTemp.append(weatherIcon, tempText)
+    var descriptionText = $("<h6>").text(description).addClass("text-center save-button");
+    var dayText = $("<h6>").text("Day: "+dayTemp+"°").addClass("text-center save-button");
+    var nightText = $("<h6>").text("Night: "+nightTemp+"°").addClass("text-center save-button");
+    iconAndTemp.append(icon, description, dayText, nightText)
     return (iconAndTemp)
 }
 
-/*var createSaveBtn = function() {
-    var iconAndText = $("<div>").addClass("d-flex col-2 align-items-center justify-content-center flex-column")
-    var saveButton = $("<span>")
-    // this following line will need to be a if statement depending on the weather itself
-    saveButton.addClass("oi oi-circle-check pb-3 pt-3") 
-    var TextText = $("<h6>").text("Save to Favorites").addClass("text-center");
-    iconAndText.append(saveButton, TextText)
-    return (iconAndText)
-}*/
-
-var createCurrentWeatherReport = function(inputCity) {
-    var currentAqi = 200 // this needs to change to a JSON element
+var createCurrentWeatherReport = function(inputCity, data) {
+    var currentUvi = data.current.uvi // this needs to change to a JSON element
+    var currentTemp = data.current.temp
+    var currentIcon = data.current.weather[0].icon
     var weatherBlock = $("<div>").addClass("weather-block justify-content-between p-1 m-2 ");
-    var location = $("<h3>").text(inputCity);
-    var currentTemp = $("<h5>").text("The temperature at " + inputCity + " is 69°").addClass()
-    var aqiEl = $("<h5>").text("AQI:" + currentAqi).addClass("aqi-element")
-    if (currentAqi < 50) {
-        aqiEl.addClass("low-aqi")
-    } else if (currentAqi >=50 && currentAqi <=150){
-        aqiEl.addClass("medium-aqi")
+    var location = $("<h3>").text(inputCity).addClass("text-capitalize");
+    var description = $("<h4>").text(data.current.weather[0].description).addClass("text-capitalize");
+    var icon = $("<img>").attr("src", "http://openweathermap.org/img/wn/"+ currentIcon +"@2x.png" ) 
+    var currentTempEl = $("<h5>").text("The temperature in " + inputCity + " is currently "+ currentTemp +"° Fahrenheit").addClass()
+    var uviEl = $("<h5>").text("UV Index:" + currentUvi).addClass("aqi-element")
+    if (currentUvi < 3) {
+        uviEl.addClass("low-aqi")
+    } else if (currentUvi >=3 && currentUvi <=5){
+        uviEl.addClass("medium-aqi")
     } else {
-        aqiEl.addClass("high-aqi")
+        uviEl.addClass("high-aqi")
     }
     // there should probably be a create weather function that spits out a div with icon, and temp
-    weatherBlock.append(location, currentTemp, aqiEl)    
+    weatherBlock.append(location, icon, description, currentTempEl, uviEl).addClass("pl-3")    
     weatherBlockContainer.append(weatherBlock)
 }
 
-var createForecast = function(inputCity) {
+var createForecast = function(inputCity, data) {
     let forecastText = $("<h5>").text("5 Day Forecast for "+ inputCity + ":").addClass("col-12")
     var weatherBlock = $("<div>").addClass("weather-block justify-content-between p-1 m-2 row");
     var weather = $("<div>").addClass("col-12 row justify-content-around");
-    var day1weather = createWeather();
-    var day2weather = createWeather();
-    var day3weather = createWeather();
-    var day4weather = createWeather();
-    var day5weather = createWeather();
-    weather.append(  day1weather, day2weather, day3weather, day4weather, day5weather)
+    var day1weather = createWeather(data,1);
+    var day2weather = createWeather(data,2);
+    var day3weather = createWeather(data,3);
+    var day4weather = createWeather(data,4);
+    var day5weather = createWeather(data,5);
+    weather.append(day1weather, day2weather, day3weather, day4weather, day5weather)
     weatherBlock.append(forecastText, weather)
-    weatherBlockContainer.append( weatherBlock)
+    weatherBlockContainer.append(weatherBlock)
 }
 
 // this clears the existing blocks of weather from the main page
 var clearExistingWeather = function() {
     var existWeatherBlock = $(".weather-block");
     existWeatherBlock.remove();
+}
+
+var getDataFromCoord = function(inputCoord, inputCity) {
+    var lat = inputCoord[0]
+    var long = inputCoord[1]
+    var apiUrl = "https://api.openweathermap.org/data/2.5/onecall?lat="+lat+"&lon="+long+"&units=imperial&appid="+ apiKey + ""
+    fetch(apiUrl).then(function(response) {
+        response.json().then(function(data){
+            console.log(data)
+            clearExistingWeather();
+            createCurrentWeatherReport(inputCity, data);
+            createForecast(inputCity, data);
+            createHistory(inputCity)
+            historyList.push(inputCity)
+            saveHistory(); 
+        })
+    })
+}
+
+var getWeatherData = function(inputCity) {
+    var inputCityTrim = inputCity.trim();
+    var apiUrl = "https://api.openweathermap.org/data/2.5/weather?q="+ inputCityTrim +"&appid="+ apiKey +""
+    fetch(apiUrl).then(function(response) {
+        response.json().then(function(data){
+            var coordArray = []
+            console.log(data)
+            coordArray.push(data.coord.lat)
+            coordArray.push(data.coord.lon)
+            getDataFromCoord(coordArray, inputCity);
+            
+        });
+    });
+    
 }
 
 loadHistory();
@@ -115,15 +148,11 @@ $(deleteEl).on("click", function() {
 $("#city-finder").on("click", "button",function(event){
     event.preventDefault();
     var inputCity = $("#city-input").val()
+    $("#city-input").val() == ""
     if (inputCity == "") {
         window.alert("Please type in a city name or choose from one of your past searches")
     } else {
-        clearExistingWeather();
-        createCurrentWeatherReport(inputCity);
-        createForecast(inputCity);
-        createHistory(inputCity)
-        historyList.push(inputCity)
-        saveHistory();    
+        getWeatherData(inputCity)
     }
 })
 
@@ -131,7 +160,5 @@ $("#city-finder").on("click", "button",function(event){
 $("#history").on("click", "li", function() {
     clearExistingWeather();
     var clickedCity = $(this).text();
-    createCurrentWeatherReport(clickedCity)
-    createForecast(clickedCity)
-})
-
+    getWeatherData(clickedCity)
+});

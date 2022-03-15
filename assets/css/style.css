@@ -8,16 +8,20 @@ nav {
     padding: 25px;
 }
 .btn {
-    background-color: blanchedalmond;
+    background-color: rgb(205, 255, 240);
 }
 
 ul {
 list-style-type: none;
 }
 
+.main-row {
+    height: 650px;
+}
+
 .weather-block {
     border-radius: 10px;
-    background-color: blanchedalmond;
+    background-color: rgb(231, 242, 255);
 }
 
 .aqi-element {
