@@ -1,6 +1,3 @@
-// when the button is clicked
-// api is called
-// new weather thing is created
 var weatherBlockContainer = $("#weatherBlockContainer")
 var historyListEl = $("#history")
 var historyList = [];
@@ -12,6 +9,7 @@ var saveHistory = function() {
     localStorage.setItem("history", JSON.stringify(historyList));
 }
 
+// this takes the history list from storage and sets it to the exisitng history list array
  var loadHistory = function() {
     storedHistoryList = JSON.parse(localStorage.getItem("history"))
     if (!storedHistoryList) {
@@ -116,7 +114,6 @@ var createDataFromCoord = function(inputCoord, inputCity) {
     var apiUrl = "https://api.openweathermap.org/data/2.5/onecall?lat="+lat+"&lon="+long+"&units=imperial&appid="+ apiKey + ""
     fetch(apiUrl).then(function(response) {
         response.json().then(function(data){
-            console.log(data)
             clearExistingWeather();
             createCurrentWeatherReport(inputCity, data);
             createForecast(inputCity, data);
@@ -127,14 +124,13 @@ var createDataFromCoord = function(inputCoord, inputCity) {
     })
 }
 
-// this functin actually gets
+// this function gets the coordinates from the input city and begins the process of getting weather data
 var getWeatherData = function(inputCity) {
     var inputCityTrim = inputCity.trim();
     var apiUrl = "https://api.openweathermap.org/data/2.5/weather?q="+ inputCityTrim +"&appid="+ apiKey +""
     fetch(apiUrl).then(function(response) {
         response.json().then(function(data){
             var coordArray = []
-            console.log(data)
             coordArray.push(data.coord.lat)
             coordArray.push(data.coord.lon)
             createDataFromCoord(coordArray, inputCity);
@@ -143,6 +139,7 @@ var getWeatherData = function(inputCity) {
     
 }
 
+// this loads the history and creates the history elements whenever the page is opened
 loadHistory();
 createHistoryFromStorage();
 
@@ -155,7 +152,7 @@ $(deleteEl).on("click", function() {
 $("#city-finder").on("click", "button",function(event){
     event.preventDefault();
     var inputCity = $("#city-input").val()
-    $("#city-input").val() == ""
+    $("#city-input").val("")
     if (inputCity == "") {
         window.alert("Please type in a city name or choose from one of your past searches")
     } else {
