@@ -23,6 +23,7 @@ var saveHistory = function() {
     return(historyList)
 }
 
+// this creates a new list item to be put into the history list
 var createHistory = function(inputCity) {
     var newListItem = $("<li>").text(inputCity).addClass("history-city text-capitalize")
     historyListEl.append(newListItem);
@@ -30,12 +31,14 @@ var createHistory = function(inputCity) {
     saveHistory();
 }
 
+// this deletes all the elements with the class history-city
 var deleteHistory = function() {
     historyList = [];
     $(".history-city").remove();
     saveHistory();
 }
 
+// this creates a new history list from the items in storage
 var createHistoryFromStorage = function() {
     if (!historyList) {
     } else {
@@ -62,8 +65,9 @@ var createWeather = function(data, inputDay) {
     return (iconAndTemp)
 }
 
+// this creates the current weather report 
 var createCurrentWeatherReport = function(inputCity, data) {
-    var currentUvi = data.current.uvi // this needs to change to a JSON element
+    var currentUvi = data.current.uvi 
     var currentTemp = data.current.temp
     var currentIcon = data.current.weather[0].icon
     var weatherBlock = $("<div>").addClass("weather-block justify-content-between p-1 m-2 ");
@@ -72,6 +76,7 @@ var createCurrentWeatherReport = function(inputCity, data) {
     var icon = $("<img>").attr("src", "http://openweathermap.org/img/wn/"+ currentIcon +"@2x.png" ) 
     var currentTempEl = $("<h5>").text("The temperature in " + inputCity + " is currently "+ currentTemp +"° Fahrenheit").addClass()
     var uviEl = $("<h5>").text("UV Index:" + currentUvi).addClass("aqi-element")
+    // this is the if chain for the uv index that changes the color
     if (currentUvi < 3) {
         uviEl.addClass("low-aqi")
     } else if (currentUvi >=3 && currentUvi <=5){
@@ -79,11 +84,12 @@ var createCurrentWeatherReport = function(inputCity, data) {
     } else {
         uviEl.addClass("high-aqi")
     }
-    // there should probably be a create weather function that spits out a div with icon, and temp
+    // this line appends the data to the actual block
     weatherBlock.append(location, icon, description, currentTempEl, uviEl).addClass("pl-3")    
     weatherBlockContainer.append(weatherBlock)
 }
 
+// this creates the 5 day forecast block
 var createForecast = function(inputCity, data) {
     let forecastText = $("<h5>").text("5 Day Forecast for "+ inputCity + ":").addClass("col-12")
     var weatherBlock = $("<div>").addClass("weather-block justify-content-between p-1 m-2 row");
@@ -104,7 +110,8 @@ var clearExistingWeather = function() {
     existWeatherBlock.remove();
 }
 
-var getDataFromCoord = function(inputCoord, inputCity) {
+// this gets the data from the input coordinates and creates the weather report
+var createDataFromCoord = function(inputCoord, inputCity) {
     var lat = inputCoord[0]
     var long = inputCoord[1]
     var apiUrl = "https://api.openweathermap.org/data/2.5/onecall?lat="+lat+"&lon="+long+"&units=imperial&appid="+ apiKey + ""
@@ -121,6 +128,7 @@ var getDataFromCoord = function(inputCoord, inputCity) {
     })
 }
 
+// this functin actually gets
 var getWeatherData = function(inputCity) {
     var inputCityTrim = inputCity.trim();
     var apiUrl = "https://api.openweathermap.org/data/2.5/weather?q="+ inputCityTrim +"&appid="+ apiKey +""
@@ -130,8 +138,7 @@ var getWeatherData = function(inputCity) {
             console.log(data)
             coordArray.push(data.coord.lat)
             coordArray.push(data.coord.lon)
-            getDataFromCoord(coordArray, inputCity);
-            
+            createDataFromCoord(coordArray, inputCity);
         });
     });
     
@@ -140,6 +147,7 @@ var getWeatherData = function(inputCity) {
 loadHistory();
 createHistoryFromStorage();
 
+// when the delete history is clicked, the delete history function is ran
 $(deleteEl).on("click", function() {
     deleteHistory();
 })
