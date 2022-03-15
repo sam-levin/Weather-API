@@ -8,4 +8,4 @@ This goal of this project was to use 3rd party API's to get data and display it 
 This site takes the input city and uses Open Weather's One Call API to find the coordinates of a given city, and then with that generates a weather report
 It also saves the history of previous locations to local storage
 
-![Screenshot of page](./assets/images/screenshot.png?raw=true)
+![Screenshot of page](./assets/images/screenshot.png)
